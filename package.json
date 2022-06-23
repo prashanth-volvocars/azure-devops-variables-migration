@@ -1,0 +1,18 @@
+{
+  "name": "gpe-variables",
+  "version": "1.0.0",
+  "description": "",
+  "main": "fetchVariables.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node fetchVariables.js"
+  },
+  "author": "Prashanth R",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
+    "envfile": "^6.17.0",
+    "mkdirp": "^1.0.4"
+  }
+}
