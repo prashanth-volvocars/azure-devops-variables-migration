@@ -5,8 +5,10 @@ const { writeFileSync } = require('fs');
 const mkdirp = require('mkdirp');
 
 (async () => {
-    const definitionsUrl = "https://vsrm.dev.azure.com/volvocargroup/DSPA/_apis/release/definitions?api-version=5.1&path="+ process.env.DEFINITION_PATH;
-
+    const definitionsUrl = "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions?api-version=5.1&path={path}";
+    const definitionsUrlToCall = definitionsUrl.replace("{organization}", process.env.ORGANIZATION)
+                                    .replace("{project}", process.env.PROJECT)
+                                    .replace("{path}", process.env.DEFINITION_PATH);
     console.log(definitionsUrl);
 
     const response = await axios.get(definitionsUrl, {
@@ -24,10 +26,12 @@ const mkdirp = require('mkdirp');
 
     console.log(definitionIds);
 
-    const url = "https://vsrm.dev.azure.com/volvocargroup/DSPA/_apis/release/definitions/{definitionId}?api-version=5.1";
+    const url = "https://vsrm.dev.azure.com/{organization}/{project}/_apis/release/definitions/{definitionId}?api-version=5.1";
 
     definitionIds.map(async (defintionId) => {
-        const url_to_call = url.replace("{definitionId}", defintionId);
+        const url_to_call = url.replace("{organization}", process.env.ORGANIZATION)
+                                .replace("{project}", process.env.PROJECT)
+                                .replace("{definitionId}", defintionId);
         console.log(url_to_call);
         const response = await axios.get(url_to_call, {
             auth: {
@@ -37,11 +41,8 @@ const mkdirp = require('mkdirp');
         });
         const data = response.data || {};
         const project = data.name || "";
-        // console.log(data);
-        // console.log(flattened_variables);
         await writeVariablesToFile(data, project);
         const environments = data.environments || [];
-        // console.log(environments);
         environments.map(async (environment) => {
             const env_name = environment.name;
             await writeVariablesToFile(environment, project, env_name);
